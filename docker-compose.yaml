@@ -1,0 +1,22 @@
+---
+version: "3"
+services:
+  # gitea
+  gitea:
+    image: gitea/gitea:latest-rootless
+    restart: always
+    volumes:
+    - ./data/config:/etc/gitea
+    - ./data/gitea:/var/lib/gitea
+  # tor
+  tor:
+    image: tor
+    restart: always
+    build:
+      context: .
+      dockerfile: tor.Dockerfile
+    volumes:
+    - ./data/tor:/var/lib/tor
+    - ./torrc:/etc/tor/torrc:ro
+    ports:
+    - 127.0.0.1:9050:9050

@@ -1,0 +1,7 @@
+# torrc
+DataDirectory /var/lib/tor
+SocksPort 0.0.0.0:9050
+
+HiddenServiceDir /var/lib/tor/gitea
+HiddenServicePort 80 gitea:3000
+HiddenServicePort 22 gitea:2222
