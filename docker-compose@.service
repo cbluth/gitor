@@ -1,3 +1,17 @@
+# /etc/systemd/system/docker-compose@.service
+
+# NOTE:
+# put the contents of this file at /etc/systemd/system/docker-compose@.service
+# eg:
+# - cp docker-compose@.service /etc/systemd/system/ ; systemctl daemon-reload
+# then, make the service directory, and populate with docker-compose.yaml file
+# eg:
+# - mkdir -p /var/lib/docker/compose/<name>
+# - cp * /var/lib/docker/compose/<name>/
+# - systemctl enable docker-compose@<name>.service
+# - systemctl start docker-compose@<name>.service
+# - journalctl -f -u docker-compose@<name>.service
+
 [Unit]
 Description=%i service with docker compose
 Requires=docker.service
@@ -5,12 +19,13 @@ After=docker.service
 
 [Service]
 Restart=always
-WorkingDirectory=/etc/docker/compose/%i
-ExecStartPre=-/usr/bin/docker-compose down
-ExecStartPre=-/usr/bin/docker-compose rm -fv
-ExecStartPre=-/bin/bash -c '[[ -x /etc/docker/compose/%i/init.sh ]] && source /etc/docker/compose/%i/init.sh'
 ExecStart=/usr/bin/docker-compose up
 ExecStop=/usr/bin/docker-compose down
+WorkingDirectory=/var/lib/docker/compose/%i
+EnvironmentFile=-/var/lib/docker/compose/%i/.env
+ExecStartPre=-/usr/bin/docker-compose down
+ExecStartPre=-/usr/bin/docker-compose rm -fv
+ExecStartPre=-/bin/bash -c '[[ -x /var/lib/docker/compose/%i/init.sh ]] && source /var/lib/docker/compose/%i/init.sh'
 
 [Install]
 WantedBy=multi-user.target

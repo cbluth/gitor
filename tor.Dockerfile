@@ -3,9 +3,11 @@ SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND="noninteractive"
 
 RUN apt update && \
+    apt dist-upgrade -y && \
     apt install --no-install-recommends -y \
         tor \
         torsocks
 
+COPY container-entrypoint /usr/local/bin/
 USER debian-tor
-ENTRYPOINT ["tor", "--RunAsDaemon", "0", "-f", "/etc/tor/torrc"]
+ENTRYPOINT ["/usr/local/bin/container-entrypoint"]

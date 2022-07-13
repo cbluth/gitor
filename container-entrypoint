@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -e
+
+exec tor --RunAsDaemon 0 -f <(
+    {
+        echo '# torrc'
+        echo "DataDirectory /var/lib/tor"
+        echo "SocksPort 0.0.0.0:9050"
+        echo
+        while read svc ; do
+            name="${svc%%=*}"
+            echo "HiddenServiceDir /var/lib/tor/${name//_/.}"
+            for map in `sed 's/,/ /' <<< ${svc#*=}` ; do
+                echo "HiddenServicePort ${map%%\:*} ${name//_/.}:${map#*\:}"
+            done
+            echo
+        done < <(env | sort | grep TORSVC | sed 's/TORSVC_//')
+        echo
+    }
+)

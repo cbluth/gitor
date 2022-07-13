@@ -15,8 +15,9 @@ services:
     build:
       context: .
       dockerfile: tor.Dockerfile
+    environment:
+      TORSVC_gitea: "22:2222,80:3000"
     volumes:
     - ./data/tor:/var/lib/tor
-    - ./torrc:/etc/tor/torrc:ro
     ports:
     - 127.0.0.1:9050:9050
